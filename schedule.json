@@ -1,0 +1,18 @@
+{
+  "note": "Upload this file to the root of your GitHub repo. The events and seeds below are PLACEHOLDERS - replace them with the real PPA / MLP schedule. Dates are UK dates, end is the last day.",
+  "updated": "2026-11-24",
+  "events": [
+    { "tour": "MLP", "name": "Season Finale", "city": "Dallas, TX",          "start": "2026-11-20", "end": "2026-11-25" },
+    { "tour": "PPA", "name": "Tour Finals",   "city": "Fort Lauderdale, FL", "start": "2026-12-08", "end": "2026-12-13" },
+    { "tour": "PPA", "name": "Desert Open",   "city": "Mesa, AZ",            "start": "2027-01-12", "end": "2027-01-17" },
+    { "tour": "MLP", "name": "Season Opener", "city": "Orlando, FL",         "start": "2027-02-04", "end": "2027-02-08" },
+    { "tour": "PPA", "name": "Florida Open",  "city": "Boca Raton, FL",      "start": "2027-02-23", "end": "2027-02-28" }
+  ],
+  "seeds": {
+    "event": "Tour Finals",
+    "MS": "Federico Staksrud",
+    "WS": "Anna Leigh Waters",
+    "MD": "Johns / Tardio",
+    "WD": "Waters / Bright"
+  }
+}
