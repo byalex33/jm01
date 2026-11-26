@@ -5,9 +5,10 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-# Adjust the user and path to wherever you cloned the repo on the Pi.
+# Adjust the user, paths and key below (setup-pi.sh fills them in for you).
 User=pi
 WorkingDirectory=/home/pi/jm01/scraper
+Environment=JM01_DEPLOY_KEY=/home/pi/.ssh/jm01_deploy
 ExecStart=/home/pi/jm01/scraper/deploy/run.sh
 # Keep a short log the timer can surface with: journalctl -u jm01-schedule
 StandardOutput=journal

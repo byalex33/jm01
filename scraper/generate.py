@@ -71,18 +71,22 @@ def run_git(cmd, cwd, env=None):
 
 def publish(repo_root, out_path, cfg):
     env = os.environ.copy()
-    key = cfg.get("deploy_key")
+    # Prefer an env var (set by the Pi's systemd unit) so the Pi never has to
+    # edit tracked config.json — a local edit there would block the rebase below.
+    key = os.environ.get("JM01_DEPLOY_KEY") or cfg.get("deploy_key")
     if key:
         env["GIT_SSH_COMMAND"] = (
             f"ssh -i {key} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
         )
     branch = cfg.get("branch", "main")
-    run_git(["pull", "--rebase", "origin", branch], repo_root, env)
+    # Commit the already-written schedule.json first, THEN rebase onto the remote
+    # and push. Pulling before committing fails on the unstaged schedule.json.
     run_git(["add", os.path.relpath(out_path, repo_root)], repo_root)
     if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=repo_root).returncode == 0:
-        print("Nothing staged — already up to date on the remote.")
+        print("Nothing staged — schedule file unchanged.")
         return
-    run_git(["commit", "-m", "schedule: update from scraper"], repo_root, env)
+    run_git(["commit", "-m", "schedule: update from scraper"], repo_root)
+    run_git(["pull", "--rebase", "origin", branch], repo_root, env)
     run_git(["push", "origin", branch], repo_root, env)
     print("Pushed schedule.json. The device picks it up within an hour.")
 

@@ -58,6 +58,17 @@ file. It also only commits when the content actually changed.
 
 ## Deploy on the Raspberry Pi
 
+**Quick way** — run the setup script on the Pi; it clones the repo (to `~/jm01`),
+makes the deploy key, installs the daily timer and tests a run:
+
+```bash
+git clone https://github.com/byalex33/jm01.git ~/jm01
+bash ~/jm01/scraper/deploy/setup-pi.sh
+```
+
+It pauses once to let you add the printed deploy key to GitHub (or paste it to
+Claude to add for you). The manual steps below are the same thing by hand.
+
 1. **Clone the repo** on the Pi: `git clone git@github.com:byalex33/jm01.git`.
 2. **Make a write-only deploy key** (can push commits, cannot create releases or
    touch firmware):
