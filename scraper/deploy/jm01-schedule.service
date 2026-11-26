@@ -1,0 +1,14 @@
+[Unit]
+Description=JM-01 pickleball schedule updater
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Adjust the user and path to wherever you cloned the repo on the Pi.
+User=pi
+WorkingDirectory=/home/pi/jm01/scraper
+ExecStart=/home/pi/jm01/scraper/deploy/run.sh
+# Keep a short log the timer can surface with: journalctl -u jm01-schedule
+StandardOutput=journal
+StandardError=journal

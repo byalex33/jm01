@@ -1,0 +1,14 @@
+{
+  "repo_root": null,
+  "branch": "main",
+  "deploy_key": null,
+  "min_upcoming": 1,
+  "name_overrides": {
+    "Pickleball Players Championships": "Players Champs"
+  },
+  "seeds": {
+    "enabled": false,
+    "firecrawl_base": "http://localhost:3002",
+    "firecrawl_api_key": null
+  }
+}

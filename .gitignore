@@ -3,4 +3,7 @@
 *.exe
 build_native/
 renders/
+renders_*/
 faces.png
+__pycache__/
+scraper/schedule_test.json

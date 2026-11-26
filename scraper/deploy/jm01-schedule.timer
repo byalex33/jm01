@@ -1,0 +1,13 @@
+[Unit]
+Description=Run the JM-01 schedule updater daily
+
+[Timer]
+# Daily, not weekly: PPA draws (the seeds) are published only a few days before
+# each event, so a weekly run would miss or badly delay them. A daily run costs
+# the same and the generator only commits when something actually changed.
+OnCalendar=*-*-* 04:30:00
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
