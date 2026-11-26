@@ -1,0 +1,15 @@
+[Unit]
+Description=JM-01 pickleball schedule updater
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Adjust the user, paths and key below (setup-pi.sh fills them in for you).
+User=pi
+WorkingDirectory=/home/pi/jm01/scraper
+Environment=JM01_DEPLOY_KEY=/home/pi/.ssh/jm01_deploy
+# Call Python directly (no shell wrapper) so a line-ending issue can't break it.
+ExecStart=/usr/bin/python3 /home/pi/jm01/scraper/generate.py --publish
+StandardOutput=journal
+StandardError=journal
