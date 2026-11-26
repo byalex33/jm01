@@ -1,5 +1,6 @@
 // The watch faces. Same layout and coordinates as the browser preview.
 #pragma once
+#include <cstdint>
 #include <string>
 #include "model.h"
 
@@ -21,3 +22,5 @@ void uiRedrawNow();                  // force a frame (used during updates)
 void uiNextFace();
 void uiSetFace(int i);               // used by the PC preview in test_native/
 int uiFaceCount();
+void uiDrawBoot(uint32_t elapsedMs); // one frame of the startup splash
+uint32_t uiBootMs();                 // total splash duration

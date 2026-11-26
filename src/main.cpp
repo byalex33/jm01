@@ -26,8 +26,17 @@ void setup() {
 
   displayBegin();
   uiBegin(&data, &state);
-  uiRedrawNow();
   displayBrightness(BRIGHTNESS_DAY);
+
+  // startup splash (plays before netBegin, which can block during Wi-Fi connect)
+  for (uint32_t t0 = millis();;) {
+    uint32_t e = millis() - t0;
+    uiDrawBoot(e);
+    displayLoop();
+    if (e >= uiBootMs()) break;
+    delay(16);
+  }
+
   netBegin(&data, &state);
 }
 

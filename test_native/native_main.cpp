@@ -95,6 +95,9 @@ int main(int argc, char** argv) {
   state.mode = Mode::Setup; uiRedrawNow(); savePPM(out + "/face_setup.ppm");
   state.mode = Mode::Updating; state.otaPct = 62; state.otaFrom = "v1.0.0"; state.otaTo = "v1.1.0";
   uiRedrawNow(); savePPM(out + "/face_update.ppm");
-  printf("\nrendered %d faces to %s\n", uiFaceCount() + 2, out.c_str());
+  // boot splash keyframes
+  int bt[] = {200, 500, 800, 1100, 1500, 2000, 2500};
+  for (int i = 0; i < 7; i++) { uiDrawBoot((uint32_t)bt[i]); displayLoop(); savePPM(out + "/boot" + std::to_string(i) + ".ppm"); }
+  printf("\nrendered %d faces + 7 boot frames to %s\n", uiFaceCount() + 2, out.c_str());
   return ok ? 0 : 1;
 }

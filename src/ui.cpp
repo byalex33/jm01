@@ -119,6 +119,22 @@ static lv_opa_t pulse(int64_t ms) { return (lv_opa_t)(255 * (0.55f + 0.45f * sin
 static std::string pts(float p) { return (p == floorf(p)) ? fmt("%d", (int)p) : fmt("%.1f", p); }
 static uint32_t tourCol(const std::string& t) { return t == "PPA" ? C::ppa : C::mlp; }
 
+// ---------- boot splash easing ----------
+static float clamp01f(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+static float easeOutCubic(float t) { t = clamp01f(t); float u = 1 - t; return 1 - u * u * u; }
+static float easeOutBounce(float t) {
+  t = clamp01f(t);
+  if (t < 4 / 11.0f) return (121 * t * t) / 16.0f;
+  if (t < 8 / 11.0f) return (363 / 40.0f * t * t) - (99 / 10.0f * t) + 17 / 5.0f;
+  if (t < 9 / 10.0f) return (4356 / 361.0f * t * t) - (35442 / 1805.0f * t) + 16061 / 1805.0f;
+  return (54 / 5.0f * t * t) - (513 / 25.0f * t) + 268 / 25.0f;
+}
+static lv_opa_t fadeIn(uint32_t e, uint32_t a, uint32_t b) {
+  if (e <= a) return 0;
+  if (e >= b) return LV_OPA_COVER;
+  return (lv_opa_t)(255 * (e - a) / (b - a));
+}
+
 static std::vector<const PbEvent*> upcoming(time_t now) {
   std::vector<const PbEvent*> v;
   for (auto& e : D->events) if (e.end > now) v.push_back(&e);
@@ -400,6 +416,43 @@ static void faceUpdate(time_t, int64_t ms) {
   line(ax, 185, ax + 15, 185, C::dim, 1); line(ax + 11, 182, ax + 15, 185, C::dim, 1); line(ax + 11, 188, ax + 15, 185, C::dim, 1);
   text(S->otaTo, ax + 23, 189, &f_b7_13, C::ink, LEFT);
   text("DON'T UNPLUG", 120, 206, &f_b6_9, C::dim, CENTER, 2);
+}
+
+// =====================================================================
+//  Boot splash: a pickleball drops in and bounces, a loader ring fills,
+//  then the JM-01 wordmark and byline fade up. Played once at startup.
+// =====================================================================
+uint32_t uiBootMs() { return 2600; }
+
+void uiDrawBoot(uint32_t e) {
+  lv_obj_t* cv = displayCanvas();
+  lv_canvas_fill_bg(cv, lv_color_black(), LV_OPA_COVER);
+  lv_canvas_init_layer(cv, &layer);
+
+  // loader ring in ball yellow, growing clockwise from 12 o'clock
+  ring(114, easeOutCubic((e - 250) / 1150.0f), C::ball, 4);
+
+  // pickleball drops from above the screen and bounces to rest
+  if (e > 300) {
+    float b = easeOutBounce((e - 300) / 780.0f);
+    int cx = 120, cy = (int)(-30 + (90 - (-30)) * b), r = 22;
+    dot(cx, cy, r, C::ball);
+    static const int hx[7] = {-9, 9, -14, 0, 14, -7, 7};   // pickleball holes
+    static const int hy[7] = {-11, -11, 2, 1, 2, 13, 13};
+    for (int i = 0; i < 7; i++) dot(cx + hx[i], cy + hy[i], 2, C::dark);
+  }
+
+  // wordmark fades in and slides up a touch
+  lv_opa_t o1 = fadeIn(e, 980, 1520);
+  if (o1) {
+    int y = 150 + (int)(7 * (1 - easeOutCubic((e - 980) / 540.0f)));
+    text("JM-01", 120, y, &f_c7_32, C::ink, CENTER, 2, o1);
+  }
+  // byline
+  lv_opa_t o2 = fadeIn(e, 1500, 2050);
+  if (o2) text("BY ALEX.CODES", 120, 178, &f_b6_11, C::ball, CENTER, 3, o2);
+
+  lv_canvas_finish_layer(cv, &layer);
 }
 
 // =====================================================================
