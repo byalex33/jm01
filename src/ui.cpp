@@ -264,21 +264,6 @@ static void faceList(time_t now, int64_t ms) {
   }
 }
 
-static void faceSeeds(time_t now, int64_t) {
-  text("TOP SEEDS", 120, 40, &f_b6_12, C::dim, CENTER, 3);
-  if (!D->seeds.valid) return waiting("SEEDS");
-  uint32_t col = C::ppa;
-  for (auto& e : D->events) if (e.name == D->seeds.event) col = tourCol(e.tour);
-  text(utf8Upper(D->seeds.event), 120, 57, &f_b7_11, col, CENTER, 2);
-  const char* labels[] = {"MEN'S SINGLES", "WOMEN'S SINGLES", "MEN'S DOUBLES", "WOMEN'S DOUBLES"};
-  const std::string* names[] = {&D->seeds.ms, &D->seeds.ws, &D->seeds.md, &D->seeds.wd};
-  for (int i = 0; i < 4; i++) {
-    int cy = 86 + i * 34;
-    text(labels[i], 120, cy - 5, &f_b6_9, C::dim, CENTER, 2);
-    text(fit(*names[i], &f_c6_20, 2 * halfChord(cy + 12) - 44), 120, cy + 13, &f_c6_20, C::ink);
-  }
-}
-
 static void faceF1(time_t now, int64_t ms) {
   if (!D->racesOk) return waiting("FORMULA 1");
   F1Next n;
@@ -457,7 +442,7 @@ void uiDrawBoot(uint32_t e) {
 
 // =====================================================================
 typedef void (*FaceFn)(time_t, int64_t);
-static const FaceFn ROTATION[] = {faceClock, faceNext, faceList, faceSeeds, faceF1, faceDrivers, faceTeams, faceMine};
+static const FaceFn ROTATION[] = {faceClock, faceNext, faceList, faceF1, faceDrivers, faceTeams, faceMine};
 static const int N_FACES = sizeof(ROTATION) / sizeof(ROTATION[0]);
 static int face = 0;
 static uint32_t faceSince = 0, lastFrame = 0, fadeStart = 0;

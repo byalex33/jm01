@@ -4,13 +4,9 @@ Keeps `schedule.json` in this repo up to date so the device shows the live
 pickleball calendar. The device fetches `schedule.json` from the repo every
 hour; this scraper regenerates it and pushes a commit when it changes.
 
-- **Schedule** — the flagship Carvana PPA Tour events (Majors, Cups, Opens,
-  Championships). Read from the JSON-LD the PPA events page already serves, so
-  it needs no browser, no API key, and only the Python standard library.
-- **Seeds** (optional, phase 2) — the #1 seeds for the next event's four pro
-  divisions, scraped from that event's "draw reveal" article via Firecrawl.
-  Draws are only published a few days before each event and the articles are
-  written in prose, so this half is best-effort and can be empty.
+It reads the flagship Carvana PPA Tour events (Majors, Cups, Opens,
+Championships) from the JSON-LD the PPA events page already serves, so it needs
+no browser, no API key, and only the Python standard library.
 
 ## What it produces
 
@@ -20,9 +16,7 @@ hour; this scraper regenerates it and pushes a commit when it changes.
   "events": [
     { "tour": "PPA", "name": "Malibu Showcase", "city": "Malibu, CA",
       "start": "2026-12-14", "end": "2026-12-20" }
-  ],
-  "seeds": { "event": "Malibu Showcase", "MS": "Staksrud", "WS": "Anna Leigh Waters",
-             "MD": "Johns / Tardio", "WD": "Waters / Parenteau" }
+  ]
 }
 ```
 
@@ -38,10 +32,9 @@ python generate.py                                                # live, writes
 python generate.py --publish                                      # live, commits + pushes if changed
 ```
 
-`--no-seeds` skips the seeds scrape. The generator **fails closed**: if the
-scrape returns no events, dates are invalid, a still-future event has vanished,
-or `seeds.event` doesn't match an event, it refuses to write and keeps the old
-file. It also only commits when the content actually changed.
+The generator **fails closed**: if the scrape returns no events, dates are
+invalid, or a still-future event has vanished, it refuses to write and keeps the
+old file. It also only commits when the content actually changed.
 
 ## config.json
 
@@ -52,9 +45,6 @@ file. It also only commits when the content actually changed.
 | `deploy_key` | Path to the SSH private key used for `git push` (see below). `null` = your normal git auth. |
 | `min_upcoming` | Refuse to publish if fewer than this many events are still upcoming. |
 | `name_overrides` | Map a scraped name to a shorter display name, e.g. `"Pickleball Players Championships": "Players Champs"`. Needed when a name clips on the screen. |
-| `seeds.enabled` | Turn the Firecrawl seeds scrape on. |
-| `seeds.firecrawl_base` | Firecrawl URL — your Pi's instance (`http://localhost:3002`) or the cloud API. |
-| `seeds.firecrawl_api_key` | Firecrawl / LLM key if your instance needs one. |
 
 ## Deploy on the Raspberry Pi
 
@@ -109,9 +99,5 @@ python ../test_native/sheet.py ../renders faces.png     # faces.png is a sheet o
 
 - **MLP** events aren't included yet — the 2027 MLP schedule isn't published. When
   it is, add a second source the same way; `tour` is already `"PPA"` or `"MLP"`.
-- **Seeds gap**: between events (and any time the next draw isn't out) the Top
-  Seeds screen shows `SEEDS / LOADING`. Carrying the last seeds forward covers
-  the days an event is live; the gap before the next draw can't be filled. A
-  small firmware change could show "DRAW NOT OUT YET" instead — ask if you want it.
 - The PPA page is server-rendered today. If it ever moves to a different format,
   the validator fails closed and the last good `schedule.json` stays up.

@@ -1,12 +1,15 @@
-import sys, zlib, struct, os
+import sys, zlib, struct, os, glob
 d = sys.argv[1]; out = sys.argv[2]
-names = [f"face{i}.ppm" for i in range(8)] + ["face_setup.ppm", "face_update.ppm"]
+faces = sorted(glob.glob(os.path.join(d, "face[0-9]*.ppm")),
+               key=lambda p: int(os.path.basename(p)[4:-4]))
+names = [os.path.basename(f) for f in faces] + ["face_setup.ppm", "face_update.ppm"]
 def ppm(p):
-    b = open(p, 'rb').read(); parts = b.split(b'\n', 3); return parts[3]
-G = 16; W = 5 * 240 + 6 * G; H = 2 * 240 + 3 * G
+    b = open(p, 'rb').read(); return b.split(b'\n', 3)[3]
+G = 16; cols = 5; N = len(names); rows = (N + cols - 1) // cols
+W = cols * 240 + (cols + 1) * G; H = rows * 240 + (rows + 1) * G
 img = bytearray([24, 26, 31] * W * H)
 for k, n in enumerate(names):
-    px = ppm(os.path.join(d, n)); ox = G + (k % 5) * (240 + G); oy = G + (k // 5) * (240 + G)
+    px = ppm(os.path.join(d, n)); ox = G + (k % cols) * (240 + G); oy = G + (k // cols) * (240 + G)
     for y in range(240):
         for x in range(240):
             dx, dy = x - 119.5, y - 119.5
